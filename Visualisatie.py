@@ -53,20 +53,34 @@ questions = [
 scale = ["Helemaal mee oneens", "Oneens", "Neutraal", "Eens", "Helemaal mee eens"]
 
 responses = []
-st.title("Villa Vibes Enquête")
-st.write("Beantwoord de volgende stellingen:")
+st.title("🏡 Villa Vibes - Gastenbeleving Enquête")
+st.markdown("We horen graag jouw mening! Geef aan in hoeverre je het eens bent met de onderstaande stellingen. Jouw feedback helpt ons verbeteren. 💬")
+
+col1, col2 = st.columns(2)
+progress = 0
 
 for i, question in enumerate(questions, 1):
-    response = st.radio(f"{i}. {question}", options=scale, key=i)
-    responses.append(scale.index(response) + 1)
+    container = col1 if i % 2 != 0 else col2
+    with container:
+        with st.container():
+            st.markdown(f"<div class='question-container'><b>{i}. {question}</b>", unsafe_allow_html=True)
+            response = st.radio("", options=scale, key=i)
+            st.markdown("</div>", unsafe_allow_html=True)
+            responses.append(scale.index(response) + 1)
 
+    progress = int((len(responses) / len(questions)) * 100)
+    st.progress(progress)
+
+st.markdown("---")
 if st.button("Toon resultaten"):
     df = pd.DataFrame({
         "Vraag": questions,
         "Score": responses
     })
-    st.dataframe(df)
+    st.subheader("Samenvatting van jouw antwoorden")
+    st.dataframe(df, use_container_width=True)
     st.bar_chart(df["Score"])
 
     csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button("Download resultaten als CSV", csv, "villa_vibes_likert.csv")
+    st.download_button("⬇️ Download resultaten als CSV", csv, "villa_vibes_likert.csv", mime="text/csv")
+
