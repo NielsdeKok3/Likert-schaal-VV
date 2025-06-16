@@ -44,7 +44,19 @@ if st.button("Toon resultaten"):
         "Score": responses
     })
     st.dataframe(df)
-    st.bar_chart(df["Score"])
+    st.bar_chart(df["Score"]
+    hist_data = pd.Series(responses).value_counts().sort_index()
+    st.bar_chart(hist_data)
+    freq_df = pd.DataFrame({
+        "Score": ["1", "2", "3", "4", "5"],
+        "Aantal keer gekozen": [responses.count(i) for i in range(1, 6)]
+    })
+    st.table(freq_df)
+    top5 = df.sort_values(by="Score", ascending=False).head(5).reset_index(drop=True)
+    st.table(top5)
+    bottom5 = df.sort_values(by="Score", ascending=True).head(5).reset_index(drop=True)
+    st.table(bottom5)
+    
 
     csv = df.to_csv(index=False).encode('utf-8')
     st.download_button("Download resultaten als CSV", csv, "villa_vibes_likert.csv")
