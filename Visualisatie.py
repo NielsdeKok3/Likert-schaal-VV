@@ -1,6 +1,28 @@
 import streamlit as st
 import pandas as pd
 
+st.set_page_config(page_title="Villa Vibes Enquête", layout="wide")
+st.markdown("""
+    <style>
+        .main {
+            background-color: #f9f9f9;
+        }
+        .stRadio > div {
+            flex-direction: row;
+        }
+        h1 {
+            color: #0e4d92;
+        }
+        .question-container {
+            background-color: #ffffff;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 questions = [
     "Ik vond mijn verblijf bij Villa Vibes aangenaam.",
     "Ik ben van plan om in de toekomst opnieuw te verblijven bij Villa Vibes.",
