@@ -1,28 +1,6 @@
 import streamlit as st
 import pandas as pd
 
-st.set_page_config(page_title="Villa Vibes Enquête", layout="wide")
-st.markdown("""
-    <style>
-        .main {
-            background-color: #f9f9f9;
-        }
-        .stRadio > div {
-            flex-direction: row;
-        }
-        h1 {
-            color: #0e4d92;
-        }
-        .question-container {
-            background-color: #ffffff;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-    </style>
-""", unsafe_allow_html=True)
-
 questions = [
     "Ik vond mijn verblijf bij Villa Vibes aangenaam.",
     "Ik ben van plan om in de toekomst opnieuw te verblijven bij Villa Vibes.",
@@ -53,34 +31,20 @@ questions = [
 scale = ["Helemaal mee oneens", "Oneens", "Neutraal", "Eens", "Helemaal mee eens"]
 
 responses = []
-st.title("🏡 Villa Vibes - Gastenbeleving Enquête")
-st.markdown("We horen graag jouw mening! Geef aan in hoeverre je het eens bent met de onderstaande stellingen. Jouw feedback helpt ons verbeteren. 💬")
-
-col1, col2 = st.columns(2)
-progress = 0
+st.title("Villa Vibes Enquête")
+st.write("Beantwoord de volgende stellingen:")
 
 for i, question in enumerate(questions, 1):
-    container = col1 if i % 2 != 0 else col2
-    with container:
-        with st.container():
-            st.markdown(f"<div class='question-container'><b>{i}. {question}</b>", unsafe_allow_html=True)
-            response = st.radio("", options=scale, key=i)
-            st.markdown("</div>", unsafe_allow_html=True)
-            responses.append(scale.index(response) + 1)
+    response = st.radio(f"{i}. {question}", options=scale, key=i)
+    responses.append(scale.index(response) + 1)
 
-    progress = int((len(responses) / len(questions)) * 100)
-    st.progress(progress)
-
-st.markdown("---")
 if st.button("Toon resultaten"):
     df = pd.DataFrame({
         "Vraag": questions,
         "Score": responses
     })
-    st.subheader("Samenvatting van jouw antwoorden")
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df)
     st.bar_chart(df["Score"])
 
     csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button("⬇️ Download resultaten als CSV", csv, "villa_vibes_likert.csv", mime="text/csv")
-
+    st.download_button("Download resultaten als CSV", csv, "villa_vibes_likert.csv")
