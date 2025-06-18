@@ -44,7 +44,7 @@ if st.button("Toon resultaten"):
         "Score": responses
     })
     st.dataframe(df)
-    st.bar_chart(df["Score"]
+    st.bar_chart(df["Score"])
     hist_data = pd.Series(responses).value_counts().sort_index()
     st.bar_chart(hist_data)
     freq_df = pd.DataFrame({
