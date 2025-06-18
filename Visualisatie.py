@@ -28,35 +28,46 @@ questions = [
     "De boekingsprocedure was eenvoudig en duidelijk.",
     "Ik zou langer willen verblijven bij een volgend bezoek aan Villa Vibes."
 ]
+
 scale = ["Helemaal mee oneens", "Oneens", "Neutraal", "Eens", "Helemaal mee eens"]
 
-responses = []
+# Titel en introductie
 st.title("Villa Vibes Enquête")
-st.write("Beantwoord de volgende stellingen:")
+st.write("Beantwoord de onderstaande stellingen door aan te geven in hoeverre je het ermee eens bent:")
 
+# Antwoorden verzamelen
+responses = []
 for i, question in enumerate(questions, 1):
     response = st.radio(f"{i}. {question}", options=scale, key=i)
     responses.append(scale.index(response) + 1)
 
+# Resultaten weergeven
 if st.button("Toon resultaten"):
     df = pd.DataFrame({
         "Vraag": questions,
-        "Score": responses
+        "Score (1-5)": responses
     })
-    st.dataframe(df)
-    st.bar_chart(df["Score"])
-    hist_data = pd.Series(responses).value_counts().sort_index()
-    st.bar_chart(hist_data)
-    freq_df = pd.DataFrame({
-        "Score": ["1", "2", "3", "4", "5"],
-        "Aantal keer gekozen": [responses.count(i) for i in range(1, 6)]
-    })
-    st.table(freq_df)
-    top5 = df.sort_values(by="Score", ascending=False).head(5).reset_index(drop=True)
-    st.table(top5)
-    bottom5 = df.sort_values(by="Score", ascending=True).head(5).reset_index(drop=True)
-    st.table(bottom5)
-    
 
+    st.subheader("Overzicht antwoorden")
+    st.dataframe(df, use_container_width=True)
+
+    st.subheader("Scoreverdeling per vraag")
+    st.bar_chart(df["Score (1-5)"])
+
+    st.subheader("Aantal keer per antwoordoptie")
+    hist = pd.Series(responses).value_counts().sort_index()
+    hist_df = pd.DataFrame({
+        "Score": hist.index,
+        "Aantal keer gekozen": hist.values
+    })
+    st.bar_chart(hist_df.set_index("Score"))
+
+    st.subheader("Top 5 hoogste scores")
+    st.table(df.sort_values("Score (1-5)", ascending=False).head(5).reset_index(drop=True))
+
+    st.subheader("Top 5 laagste scores")
+    st.table(df.sort_values("Score (1-5)", ascending=True).head(5).reset_index(drop=True))
+
+    # Downloadknop
     csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button("Download resultaten als CSV", csv, "villa_vibes_likert.csv")
+    st.download_button("Download resultaten als CSV", csv, "villa_vibes_resultaten.csv")
